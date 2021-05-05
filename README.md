@@ -1,11 +1,10 @@
 # powershell-temp-file-cleaner
-Utilizes simple Powershell scripts to clean directories based on date last modified
+A Powershell script that query SQL for a list of directory paths & cleaning schedules, then recursively deletes old files and empty directories.
 
-Two powershell commands that rescursively remove files based on last-modified-date.  
+Cleaning IDs are set to 1, 2, 3, and 4 representing "1 day, 2 weeks, 1 month, 1 year" respectively - as can be inferred from the amount of days subtracted from current date.
 
 Code can be changed to delete based on file-creation-date:
 replace "# Delete files older than the $limit" with:
 
 Get-ChildItem -Path $path -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.CreationTime -lt $limit } | Remove-Item -Force
 
-Deletes empty directories as well.  Very useful for cleaning up old files / directories.
