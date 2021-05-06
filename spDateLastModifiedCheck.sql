@@ -32,7 +32,7 @@ FolderLocation,
 CASE
     WHEN TimeMeasurement = 'YY' THEN DATEADD(YY, -TimeDistance, GETDATE())
     WHEN TimeMeasurement = 'M' THEN DATEADD(M, -TimeDistance, GETDATE())
-	WHEN TimeMeasurement = 'D' THEN DATEADD(D, -TimeDistance, GETDATE())
+    WHEN TimeMeasurement = 'D' THEN DATEADD(D, -TimeDistance, GETDATE())
 END AS DateLastModifiedCheck
 FROM [CleanSchedule] cs
 INNER JOIN [FolderSetup] fs ON cs.ID = ScheduleID
