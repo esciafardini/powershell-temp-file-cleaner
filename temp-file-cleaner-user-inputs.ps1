@@ -1,4 +1,4 @@
-#earlier version....testing without SQL interaction
+#TEST VERSION....testing without SQL interaction
 
 #User inputs amount of days(2, 14, 31, 365)
 $InputDays = Read-Host -Prompt 'Delete files older than XX days?'

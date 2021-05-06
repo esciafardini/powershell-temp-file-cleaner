@@ -1,20 +1,17 @@
-#Create dataset from SQL
-$DS = Invoke-Sqlcmd -ServerInstance "escdv2021in\fldrdbs" -Query "SELECT  FolderLocation, ScheduleID FROM Intermediate.foldercleaner.FolderInfo" -As DataSet
+$server = "escdv2021\fldrdbs"
+$database = "FolderCleanerDB"
 
-#Iterate through each Row in dataset and extract Schedule ID (corresponds to date last modified) & Folder Location (URL path)
+
+#Create dataset from SQL stored procedure
+$DS = Invoke-Sqlcmd -ServerInstance $server -Database $database -Query "EXEC clean.spDateLastModifiedCheck" -As DataSet
+
+#Iterate through each Row in dataset and extract Folder Location (URL path) & Date Last Modified condition (corresponds to Schedule ID)
 foreach ($Row in $DS.Tables[0].Rows)
 { 
   $path = $Row.FolderLocation
+  $limit = $Row.DateLastModifiedCheck
 
-  switch ($Row.ScheduleID)
-  {
-    1 { $limit = (Get-Date).AddDays(-2) }
-    2 { $limit = (Get-Date).AddDays(-14) }
-    3 { $limit = (Get-Date).AddDays(-31) }
-    4 { $limit = (Get-Date).AddDays(-365) }
-  }
-
-  #Delete files with "Last Write Time" occuring within specified limit (2 days ago, 2 weeks ago, 1 month ago, 1 year ago respectively)
+  #Delete files with "Last Write Time" occuring within specified limit
   Get-ChildItem -Path $path -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $limit } | Remove-Item -Force
 
   #Delete all empty directories including nested directories but excluding the root directory
@@ -23,7 +20,3 @@ foreach ($Row in $DS.Tables[0].Rows)
       $dirs | Foreach-Object { Remove-Item $_ }
      } while ($dirs.count -gt 0)
 }
-
-
-
-
